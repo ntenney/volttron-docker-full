@@ -27,7 +27,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Clone submodule
-      run: git submodule update --init --recursive && cd volttron && git pull --rebase origin develop
+      run: git submodule update --init --recursive && cd volttron && git checkout develop
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
