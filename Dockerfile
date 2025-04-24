@@ -1,13 +1,16 @@
 ARG image_repo=rust
 ARG image_tag=bookworm
-#
+
 FROM ${image_repo}:${image_tag} AS volttron_base
+
+ARG volttron_repo=https://github.com/VOLTTRON/volttron.git
+ARG volttron_git_branch=main
 #
 SHELL [ "bash", "-c" ]
 #
 ENV OS_TYPE=debian
 ENV DIST=bookworm
-ENV VOLTTRON_GIT_BRANCH=main
+ENV VOLTTRON_GIT_BRANCH=${volttron_git_branch}
 ENV VOLTTRON_USER_HOME=/home/volttron
 ENV VOLTTRON_HOME=${VOLTTRON_USER_HOME}/.volttron
 ENV CODE_ROOT=/code
@@ -15,12 +18,12 @@ ENV VOLTTRON_ROOT=${CODE_ROOT}/volttron
 ENV VOLTTRON_USER=volttron
 ENV USER_PIP_BIN=${VOLTTRON_USER_HOME}/.local/bin
 ENV CONFIG=/home/volttron/configs
+ENV TZ=UTC
 ENV LOCAL_USER_ID=1000
 #ENV RMQ_ROOT=${VOLTTRON_USER_HOME}/rabbitmq_server
 #ENV RMQ_HOME=${RMQ_ROOT}/rabbitmq_server-3.7.7
 #
 USER root
-#
 RUN set -eux; apt-get update; apt-get install -y --no-install-recommends \
     procps \
     gosu \
@@ -45,23 +48,24 @@ RUN set -eux; apt-get update; apt-get install -y --no-install-recommends \
     libffi-dev \
     sqlite3
 #
-# Set timezone
-RUN echo UTC > /etc/timezone
-
 # Set default 'python' to 'python3'
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+
 #
 # Set global.break-system-packages to true to allow pip to install packages
 #
 RUN python3 -m pip config set global.break-system-packages true
+
 #
 # Upgrade pip so that we get a pre-compiled wheel for 'cryptopgraphy', which is a dependency of Volttron
 # See https://cryptography.io/en/latest/faq/#installing-cryptography-fails-with-error-can-not-find-rust-compiler
 RUN pip install --upgrade pip
+
 #
 # Install rust and cargo
 #
 RUN rustup default stable
+
 #
 # Create a user called 'volttron'
 RUN id -u $VOLTTRON_USER &>/dev/null || adduser --disabled-password --gecos "" $VOLTTRON_USER
@@ -74,17 +78,23 @@ RUN mkdir -p /code && chown $VOLTTRON_USER.$VOLTTRON_USER /code && \
 # Creating volttron_core stage
 ############################################
 FROM volttron_base AS volttron_core
-#
+
+ARG volttron_repo=https://github.com/VOLTTRON/volttron.git
+ARG volttron_git_branch=main
+
 # copy over /core, i.e. the custom startup scripts for this image
 RUN mkdir /startup $VOLTTRON_HOME && \
     chown $VOLTTRON_USER.$VOLTTRON_USER $VOLTTRON_HOME
 COPY --chown=volttron:volttron ./core /startup
 RUN chmod +x /startup/*
+
 #
 # copy over volttron repo
 USER $VOLTTRON_USER
-COPY --chown=volttron:volttron volttron /code/volttron
-WORKDIR /code/volttron
+
+RUN git clone --branch ${volttron_git_branch} --single-branch ${volttron_repo} ${VOLTTRON_ROOT}
+WORKDIR ${VOLTTRON_ROOT}
+
 #
 # Set global.break-system-packages to true to allow pip to install packages
 #
@@ -94,15 +104,13 @@ RUN python3 -m pip config set global.break-system-packages true
 # See https://cryptography.io/en/latest/faq/#installing-cryptography-fails-with-error-can-not-find-rust-compiler
 RUN pip install --upgrade pip
 
+#
+# Now install volttron required packages
+#
 RUN pip install -e . --user
 RUN echo "package installed at `date`"
 
-# copy default configs
-#COPY --chown=volttron:volttron ./platform_config.yml /platform_config.yml
-#COPY --chown=volttron:volttron ./configs /home/volttron/configs
-
-
-##
+#
 #############################################
 ## RABBITMQ SPECIFIC INSTALLATION
 #############################################
