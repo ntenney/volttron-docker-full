@@ -30,7 +30,7 @@ docker-compose script with the updated image name that uses the tag as part of
 its name.
 
 # Example below
-$ docker build -t eclipsevolttron/volttron:<some tag> --build-arg install_rmq=false --no-cache  .
+$ docker buildx build -t eclipsevolttron/volttron:<some tag> --build-arg install_rmq=false --no-cache  .
 
 # Create and start the container that has runs Volttron
 $ docker-compose up
@@ -154,32 +154,21 @@ To set up your environment for development, do the following:
 chmod a+x core/*
 ```
 
-1. Pull in volttron from the [official volttron repo](https://github.com/VOLTTRON/volttron) using the following git command:
+1. Build the image locally:
 
+* Using docker buildx (preferred)
 ```bash
-# Clones https://github.com/VOLTTRON/volttron.git into the 'volttron' directory
-git submodule update --init --recursive
+docker buildx build -f Dockerfile-dev --no-cache --force-rm .
 ```
 
-Why are we doing this? This repo has a directory called 'volttron', which contains the volttron codebase. In other words, this repo contains another repo in a subfolder.
-When you initially clone this repo, the 'volttron' directory is empty. This directory contains the volttron codebase used to create the volttron platform.
+* Dockerfile will clone the volttron repository in the image from https://github.com/VOLTTRON/volttron.git 
+  and defaults to the main branch. Dockerfile-dev defaults to the develop branch. Other than that, they are 
+  identical. If you would like to use a different repository, or branch, you can set the following build 
+  arguments (specified with the --build-arg flag):
+    - volttron_repo: The repository to clone. Use the https URL for the repo.
+    - volttron_git_branch: The branch or tag to clone. Defaults to main. 
 
-OPTIONAL: This repo uses a specific version of volttron based on the commit in the 'volttron' submodule. If you want to use the latest volttron from the `develop`
-branch from the volttron repo, execute the following command (NOTE: this is not required):
-
-```bash
-# Ensure that you are in the `volttron` folder
-git pull origin develop
-```
-
-2. Build the image locally:
-
-* Using docker-compose (preferred)
-```bash
-docker-compose -f docker-compose-dev.yml build --no-cache --force-rm
-```
-
-3. Run the container:
+2. Run the container:
 
 * Using docker-compose (preferred)
 ```
