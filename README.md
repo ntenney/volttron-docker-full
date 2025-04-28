@@ -158,7 +158,7 @@ chmod a+x core/*
 
 * Using docker buildx (preferred)
 ```bash
-docker buildx build -f Dockerfile-dev --no-cache --force-rm .
+docker buildx build -f Dockerfile-dev --no-cache --force-rm -t user/inagename:tag .
 ```
 
 * Dockerfile will clone the volttron repository in the image from https://github.com/VOLTTRON/volttron.git 
@@ -167,6 +167,10 @@ docker buildx build -f Dockerfile-dev --no-cache --force-rm .
   arguments (specified with the --build-arg flag):
     - volttron_repo: The repository to clone. Use the https URL for the repo.
     - volttron_git_branch: The branch or tag to clone. Defaults to main. 
+
+```bash
+docker buildx build -f Dockerfile-dev --no-cache --force-rm --build-arg volttron_repo=https://github.com/myuser/volttron-docker-fork.git --build-arg volttron_git_branch=feature123 -t user/inagename:tag .
+```
 
 2. Run the container:
 
