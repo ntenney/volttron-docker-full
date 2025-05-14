@@ -14,7 +14,7 @@ env:
 
 jobs:
   create_release_publish_to_dhub:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
     - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
