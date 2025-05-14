@@ -11,7 +11,7 @@ on:
     types: [opened, reopened, synchronize]
 env:
   # Image name on Volttron DockerHub account at https://hub.docker.com/orgs/eclipsevolttron
-  IMAGE_BASE_NAME: eclipsevolttron/volttron
+  IMAGE_BASE_NAME: ${{env.IMAGE_BASE_NAME || eclipsevolttron/volttron}}
 
 jobs:
   publish_develop_to_dhub:
@@ -31,6 +31,8 @@ jobs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
+      with:
+        platforms: linux/amd64,linux/arm64
 
     # Ensure that the repo has the username and token added from the
     # official Volttron Dockerhub page at https://hub.docker.com/repository/docker/eclipsevolttron/volttron/general
@@ -48,6 +50,7 @@ jobs:
       with:
         context: .
         file: ${{ env.DOCKERFILE || './Dockerfile' }}
+        platforms: linux/amd64,linux/arm64
         push: true
         tags: |
           ${{ env.IMAGE_BASE_NAME }}:develop
