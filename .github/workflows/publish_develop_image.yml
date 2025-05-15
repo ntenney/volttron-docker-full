@@ -12,6 +12,8 @@ on:
 env:
   # Image name on Volttron DockerHub account at https://hub.docker.com/orgs/eclipsevolttron
   IMAGE_BASE_NAME: ${{vars.IMAGE_BASE_NAME || 'eclipsevolttron/volttron'}}
+  VOLTTRON_GIT_REPO: ${{vars.VOLTTRON_GIT_REPO || 'https://github.com/VOLTTRON/volttron.git'}}
+  VOLTTRON_GIT_BRANCH: ${{vars.VOLTTRON_GIT_BRANCH || 'develop'}}
 
 jobs:
   publish_develop_to_dhub:
@@ -51,6 +53,9 @@ jobs:
         context: .
         file: ${{ env.DOCKERFILE || './Dockerfile' }}
         platforms: linux/amd64,linux/arm64
+        build-args:
+          volttron_git_branch: ${{ env.VOLTTRON_GIT_BRANCH }}
+          volttron_repo: ${{ env.VOLTTRON_GIT_REPO }}
         push: true
         tags: |
           ${{ env.IMAGE_BASE_NAME }}:develop
