@@ -364,20 +364,23 @@ def final_platform_configurations():
     sleep(5)
     sys.exit(0)
 
+
 def create_web_map(username, password, groups=None, return_json=False):
     from passlib.hash import argon2
-    groups = groups if isinstance(groups, list) else [groups] if groups else ['admin', 'vui']
+
+    groups = (
+        groups if isinstance(groups, list) else [groups] if groups else ["admin", "vui"]
+    )
     web_users_dict = {
-        username: {
-            "hashed_password": argon2.hash(password),
-            "groups": groups
-        }
+        username: {"hashed_password": argon2.hash(password), "groups": groups}
     }
     return web_users_dict if not return_json else json.dumps(web_users_dict)
 
+
 def save_web_users_json_file(username, password, groups=None):
     from pathlib import Path
-    with open(Path(VOLTTRON_HOME)/'web-users.json', 'w') as f:
+
+    with open(Path(VOLTTRON_HOME) / "web-users.json", "w") as f:
         json.dump(create_web_map(username, password, groups), f)
 
 

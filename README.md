@@ -161,12 +161,12 @@ chmod a+x core/*
 docker buildx build -f Dockerfile-dev --no-cache --force-rm -t user/inagename:tag .
 ```
 
-* Dockerfile will clone the volttron repository in the image from https://github.com/VOLTTRON/volttron.git 
-  and defaults to the main branch. Dockerfile-dev defaults to the develop branch. Other than that, they are 
-  identical. If you would like to use a different repository, or branch, you can set the following build 
+* Dockerfile will clone the volttron repository in the image from https://github.com/VOLTTRON/volttron.git
+  and defaults to the main branch. Dockerfile-dev defaults to the develop branch. Other than that, they are
+  identical. If you would like to use a different repository, or branch, you can set the following build
   arguments (specified with the --build-arg flag):
     - volttron_repo: The repository to clone. Use the https URL for the repo.
-    - volttron_git_branch: The branch or tag to clone. Defaults to main. 
+    - volttron_git_branch: The branch or tag to clone. Defaults to main.
 
 ```bash
 docker buildx build -f Dockerfile-dev --no-cache --force-rm \
