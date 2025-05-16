@@ -12,7 +12,7 @@ on:
 env:
   # Image name on Volttron DockerHub account at https://hub.docker.com/orgs/eclipsevolttron
   IMAGE_BASE_NAME: ${{vars.IMAGE_BASE_NAME || 'eclipsevolttron/volttron'}}
-  IMAGE_TAG: ${{ vars.IMAGE_TAG || github.ref == 'refs/heads/develop' && 'develop || 'test-build'}}
+  IMAGE_TAG: ${{ vars.IMAGE_TAG || github.ref == 'refs/heads/develop' && 'develop' || 'test-build'}}
   VOLTTRON_GIT_REPO: ${{vars.VOLTTRON_GIT_REPO || 'https://github.com/VOLTTRON/volttron.git'}}
   VOLTTRON_GIT_BRANCH: ${{vars.VOLTTRON_GIT_BRANCH || 'develop'}}
 
