@@ -11,9 +11,9 @@ In conjunction with volume mounting of the directory, this ensures that file own
 # Prerequisites
 
 * Docker ^20.10.8
-* Docker-compose ^1.29.2
+* Docker compose ^1.29.2
 
-If you need to install docker and/or docker-compose AND you are running this image on an Ubuntu machine, you can use the script in this repo. From the root level, execute the following command:
+If you need to install docker and/or docker compose AND you are running this image on an Ubuntu machine, you can use the script in this repo. From the root level, execute the following command:
 
 ```bash
 $ ./docker_install_ubuntu.sh
@@ -26,29 +26,29 @@ To create the container and start using the platform on the container, run the f
 ```
 
 # Build the image locally. Set <tag> to some tag. Then update the
-docker-compose script with the updated image name that uses the tag as part of
+docker compose script with the updated image name that uses the tag as part of
 its name.
 
 # Example below
 $ docker buildx build -t eclipsevolttron/volttron:<some tag> --build-arg install_rmq=false --no-cache  .
 
 # Create and start the container that has runs Volttron
-$ docker-compose up
+$ docker compose up
 
 # SSH into the container as the user 'volttron'
 $ docker exec -itu volttron volttron1 bash
 
 # Stop the container
-$ docker-compose stop
+$ docker compose stop
 
 # Start the container
-$ docker-compose start
+$ docker compose start
 
-# To get a list of all containers created from docker-compose
-$ docker-compose ps
+# To get a list of all containers created from docker compose 
+$ docker compose ps
 
 # To stop and remove the container
-$ docker-compose down
+$ docker compose down
 ```
 
 For Volttron instances using ZMQ message bus:
@@ -139,9 +139,9 @@ Agents within the `platform_config.yml` file are created sequentially, it can ta
 # Development
 
 If you plan on extending or developing `platform_config.yml`, `configs/`, or the setup scripts in `core/`, build the
-Docker image, "Dockerfile-dev", only once using `docker-compose -f docker-compose-dev.yml build --no-cache volttron1`.
+Docker image, "Dockerfile-dev", only once using `docker compose -f docker-compose-dev.yml build --no-cache volttron1`.
 
-Then start the container using `docker-compose -f docker-compose-dev.yml up`. When you want to make changes to "platform_config.yml", "configs/", or
+Then start the container using `docker compose -f docker-compose-dev.yml up`. When you want to make changes to "platform_config.yml", "configs/", or
 "core/", simply make the changes and then rerun your container. You do not have to rebuild the image every time you make changes to those
 aforementioned files and folders because they are mounted into the container. The only time you should rebuild the image is when
 you make changes to the "volttron" source code since that is not mounted to the container but rather baked into the image during
@@ -176,9 +176,9 @@ docker buildx build -f Dockerfile-dev --no-cache --force-rm \
 
 2. Run the container:
 
-* Using docker-compose (preferred)
+* Using docker compose (preferred)
 ```
-docker-compose -f docker-compose-dev.yml up
+docker compose -f docker-compose-dev.yml up
 ```
 
 ## Testing

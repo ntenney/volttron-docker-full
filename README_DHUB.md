@@ -83,7 +83,7 @@ eclipsevolttron/volttron:v3.0
 If you don't want to type a long `docker run` command every time you run a container, you can wrap your command in a
 docker-compose script. See this example from (docker-compose.yml)[https://github.com/VOLTTRON/volttron-docker/blob/main/docker-compose.yml].
 Note that you still need to ensure that the paths to the bind-mounts are properly constructed. After you create your docker-compose script,
-run `docker-compose run` in the same directory that holds your script.
+run `docker compose run` in the same directory that holds your script.
 
 ```shell
 version: '3.4'
