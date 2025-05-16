@@ -44,7 +44,7 @@ $ docker compose stop
 # Start the container
 $ docker compose start
 
-# To get a list of all containers created from docker compose 
+# To get a list of all containers created from docker compose
 $ docker compose ps
 
 # To stop and remove the container

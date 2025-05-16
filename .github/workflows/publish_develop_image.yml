@@ -51,7 +51,7 @@ jobs:
         if [ -n "${{ vars.DOCKER_USER }}" -a -n "${{ secrets.DOCKER_API_TOKEN }}" ]; then
           echo " "
           echo "Connecting to docker"
-        
+
           echo "${{ secrets.DOCKER_API_TOKEN }}" | docker login -u "${{ vars.DOCKER_USER }}" --password-stdin
           status=$?
           if [ $status -ne 0 ]; then
