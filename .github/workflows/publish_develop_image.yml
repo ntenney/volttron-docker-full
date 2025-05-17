@@ -60,35 +60,45 @@ jobs:
           fi
         fi
 
-    - name: Build and push
+    - name: Build Image
       id: docker_build
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        file: ${{ env.DOCKERFILE || './Dockerfile' }}
-        platforms: linux/amd64,linux/arm64
-        build-args: |
-          volttron_git_branch=${{ env.VOLTTRON_GIT_BRANCH }}
-          volttron_repo=${{ env.VOLTTRON_GIT_REPO }}
-        push: true
-        tags: |
-          ${{ env.IMAGE_BASE_NAME }}:${{ env.IMAGE_TAG }}
+      run: |
+        echo "Building image"
+        echo "docker buildx build \
+          --build-arg volttron_git_branch=${{ env.VOLTTRON_GIT_BRANCH }} \
+          --build-arg volttron_repo=${{ env.VOLTTRON_GIT_REPO }} \
+          --platform linux/amd64,linux/arm64 \
+          -t ${{ env.IMAGE_BASE_NAME }}:${{ env.IMAGE_TAG }} \
+          -f ${{ env.DOCKERFILE || './Dockerfile' }} --no-cache --force-rm ."
+        docker buildx build \
+          --build-arg volttron_git_branch=${{ env.VOLTTRON_GIT_BRANCH }} \
+          --build-arg volttron_repo=${{ env.VOLTTRON_GIT_REPO }} \
+          --platform linux/amd64,linux/arm64 \
+          -t ${{ env.IMAGE_BASE_NAME }}:${{ env.IMAGE_TAG }} \
+          -f ${{ env.DOCKERFILE || './Dockerfile' }} --no-cache --force-rm .
+        status=$?
+        if [ $status -ne 0 ]; then
+          echo "Error: status $status"
+          exit 1
+        fi
+
+    - name: Push Image
+      id: docker_push
+      run: |
+        echo "Pushing image"
+        echo "docker push ${{ env.IMAGE_BASE_NAME }}:${{ env.IMAGE_TAG }}"
+        echo "digest=$(docker push ${{ env.IMAGE_BASE_NAME }}:${{ env.IMAGE_TAG }} | tail -n 1)\n" >> $GITHUB_OUTPUT
+        status=$?
+        if [ $status -ne 0 ]; then
+          echo "Error: status $status"
+          exit 1
+        fi
 
     - name: Check image publish
-      if: steps.docker_build.outputs.digest == ''
+      if: steps.docker_push.outputs.digest == ''
       run: exit 1
 
     - name: Image Digest
-      run: echo ${{ steps.docker_build.outputs.digest }}
-
-    # https://github.com/marketplace/actions/docker-hub-description
-    # Currently doesn't work with personal access tokens; see https://github.com/peter-evans/dockerhub-description/issues/10
-    # when fixed, uncomment this step
-#    - name: Update DockerHub repo README
-#      uses: peter-evans/dockerhub-description@v2
-#      with:
-#        username: ${{ secrets.DOCKER_USER }}
-#        password: ${{ secrets.DOCKER_PASSWORD }}
-#        readme-filepath: ./README_DHUB.md
+      run: echo ${{ steps.docker_push.outputs.digest }}
 
     - run: echo "🍏 This job's status is ${{ job.status }}."
