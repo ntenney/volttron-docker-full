@@ -14,7 +14,7 @@ exit_cleanly() {
 exit_test() {
   echo -e "$1"
   docker logs --tail 25 volttron1
-  docker-compose down
+  docker compose down
   exit_cleanly
 }
 
@@ -62,7 +62,7 @@ attempts=5
 echo "Will try at most ${attempts} attempts to start container..."
 while [ "${attempts}" -gt 0 ]; do
   echo "Attempt number ${attempts} to start container."
-  docker-compose --file docker-compose-test.yml up --detach
+  docker compose --file docker-compose-test.yml up --detach
   echo "Configuring and starting Volttron platform; this will take approximately several minutes........"
   sleep ${wait}
   docker ps --filter "name=volttron1" --filter "status=running" | grep 'volttron1'
@@ -70,7 +70,7 @@ while [ "${attempts}" -gt 0 ]; do
   if [ "${tmp_code}" -eq 1 ]; then
     echo "Container failed to start."
     docker logs --tail 20 volttron1
-    docker-compose down
+    docker compose down
     ((attempts=attempts-1))
   else
     # Container was successfully created

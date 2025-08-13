@@ -11,9 +11,9 @@ In conjunction with volume mounting of the directory, this ensures that file own
 # Prerequisites
 
 * Docker ^20.10.8
-* Docker-compose ^1.29.2
+* Docker compose ^1.29.2
 
-If you need to install docker and/or docker-compose AND you are running this image on an Ubuntu machine, you can use the script in this repo. From the root level, execute the following command:
+If you need to install docker and/or docker compose AND you are running this image on an Ubuntu machine, you can use the script in this repo. From the root level, execute the following command:
 
 ```bash
 $ ./docker_install_ubuntu.sh
@@ -26,29 +26,29 @@ To create the container and start using the platform on the container, run the f
 ```
 
 # Build the image locally. Set <tag> to some tag. Then update the
-docker-compose script with the updated image name that uses the tag as part of
+docker compose script with the updated image name that uses the tag as part of
 its name.
 
 # Example below
-$ docker build -t eclipsevolttron/volttron:<some tag> --build-arg install_rmq=false --no-cache  .
+$ docker buildx build -t eclipsevolttron/volttron:<some tag> --build-arg install_rmq=false --no-cache  .
 
 # Create and start the container that has runs Volttron
-$ docker-compose up
+$ docker compose up
 
 # SSH into the container as the user 'volttron'
 $ docker exec -itu volttron volttron1 bash
 
 # Stop the container
-$ docker-compose stop
+$ docker compose stop
 
 # Start the container
-$ docker-compose start
+$ docker compose start
 
-# To get a list of all containers created from docker-compose
-$ docker-compose ps
+# To get a list of all containers created from docker compose
+$ docker compose ps
 
 # To stop and remove the container
-$ docker-compose down
+$ docker compose down
 ```
 
 For Volttron instances using ZMQ message bus:
@@ -139,9 +139,9 @@ Agents within the `platform_config.yml` file are created sequentially, it can ta
 # Development
 
 If you plan on extending or developing `platform_config.yml`, `configs/`, or the setup scripts in `core/`, build the
-Docker image, "Dockerfile-dev", only once using `docker-compose -f docker-compose-dev.yml build --no-cache volttron1`.
+Docker image, "Dockerfile-dev", only once using `docker compose -f docker-compose-dev.yml build --no-cache volttron1`.
 
-Then start the container using `docker-compose -f docker-compose-dev.yml up`. When you want to make changes to "platform_config.yml", "configs/", or
+Then start the container using `docker compose -f docker-compose-dev.yml up`. When you want to make changes to "platform_config.yml", "configs/", or
 "core/", simply make the changes and then rerun your container. You do not have to rebuild the image every time you make changes to those
 aforementioned files and folders because they are mounted into the container. The only time you should rebuild the image is when
 you make changes to the "volttron" source code since that is not mounted to the container but rather baked into the image during
@@ -154,36 +154,31 @@ To set up your environment for development, do the following:
 chmod a+x core/*
 ```
 
-1. Pull in volttron from the [official volttron repo](https://github.com/VOLTTRON/volttron) using the following git command:
+1. Build the image locally:
+
+* Using docker buildx (preferred)
+```bash
+docker buildx build -f Dockerfile-dev --no-cache --force-rm -t user/inagename:tag .
+```
+
+* Dockerfile will clone the volttron repository in the image from https://github.com/VOLTTRON/volttron.git
+  and defaults to the main branch. Dockerfile-dev defaults to the develop branch. Other than that, they are
+  identical. If you would like to use a different repository, or branch, you can set the following build
+  arguments (specified with the --build-arg flag):
+    - volttron_repo: The repository to clone. Use the https URL for the repo.
+    - volttron_git_branch: The branch or tag to clone. Defaults to main.
 
 ```bash
-# Clones https://github.com/VOLTTRON/volttron.git into the 'volttron' directory
-git submodule update --init --recursive
+docker buildx build -f Dockerfile-dev --no-cache --force-rm \
+    --build-arg volttron_repo=https://github.com/myuser/volttron-docker-fork.git \
+    --build-arg volttron_git_branch=feature123 -t user/inagename:tag .
 ```
 
-Why are we doing this? This repo has a directory called 'volttron', which contains the volttron codebase. In other words, this repo contains another repo in a subfolder.
-When you initially clone this repo, the 'volttron' directory is empty. This directory contains the volttron codebase used to create the volttron platform.
+2. Run the container:
 
-OPTIONAL: This repo uses a specific version of volttron based on the commit in the 'volttron' submodule. If you want to use the latest volttron from the `develop`
-branch from the volttron repo, execute the following command (NOTE: this is not required):
-
-```bash
-# Ensure that you are in the `volttron` folder
-git pull origin develop
+* Using docker compose (preferred)
 ```
-
-2. Build the image locally:
-
-* Using docker-compose (preferred)
-```bash
-docker-compose -f docker-compose-dev.yml build --no-cache --force-rm
-```
-
-3. Run the container:
-
-* Using docker-compose (preferred)
-```
-docker-compose -f docker-compose-dev.yml up
+docker compose -f docker-compose-dev.yml up
 ```
 
 ## Testing
