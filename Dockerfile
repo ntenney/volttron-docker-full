@@ -92,6 +92,7 @@ RUN chmod +x /startup/*
 # copy over volttron repo
 USER $VOLTTRON_USER
 
+
 RUN git clone --branch ${volttron_git_branch} --single-branch ${volttron_repo} ${VOLTTRON_ROOT}
 WORKDIR ${VOLTTRON_ROOT}
 
