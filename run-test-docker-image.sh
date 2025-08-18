@@ -131,7 +131,7 @@ output=$(docker exec -u volttron volttron1 cat /home/volttron/.volttron/config)
 check_error_code $? 'Failed to get platform configuration'
 count=$(docker exec -u volttron volttron1 cat /home/volttron/.volttron/config | grep "" -c)
 if [ "${count}" -ne 9 ]; then
-  exit_test "Platform not correctly configured. Expected at least 8 lines of configuration. Recevied ${count} lines.\n${output}"
+  exit_test "Platform not correctly configured. Expected at least 8 lines of configuration. Received ${count} lines.\n${output}"
 fi
 echo "PASSED....CHECKING PLATFORM CONFIG."
 
