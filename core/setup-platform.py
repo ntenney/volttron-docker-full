@@ -181,7 +181,7 @@ def _create_certs(cfg_path, platform_cfg):
 #
 #     # Create rmq config YAML file
 #     rabbitfilename = os.path.join(VOLTTRON_HOME, "rabbitmq_config.yml")
-#     print("Creating rabbitmq conifg file at {}".format(rabbitfilename))
+#     print("Creating rabbitmq config file at {}".format(rabbitfilename))
 #     print("dumpfile is :{}".format(rabbit_config))
 #     with open(rabbitfilename, "w") as outfile:
 #         yaml.dump(rabbit_config, outfile, default_flow_style=False)
