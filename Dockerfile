@@ -101,7 +101,7 @@ WORKDIR ${VOLTTRON_ROOT}
 #
 RUN python3 -m pip config set global.break-system-packages true
 #
-# Upgrade pip so that we get a pre-compiled wheel for 'cryptopgraphy', which is a dependency of Volttron
+# Upgrade pip so that we get a pre-compiled wheel for 'cryptography', which is a dependency of Volttron
 # See https://cryptography.io/en/latest/faq/#installing-cryptography-fails-with-error-can-not-find-rust-compiler
 RUN pip install --upgrade pip
 
