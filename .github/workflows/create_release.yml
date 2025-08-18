@@ -14,7 +14,7 @@ env:
 
 jobs:
   create_release_publish_to_dhub:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
     - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
@@ -23,7 +23,7 @@ jobs:
 
     # https://github.com/marketplace/actions/checkout
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
         ref: develop
@@ -93,6 +93,8 @@ jobs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
+      with:
+        platforms: linux/amd64,linux/arm64
 
     # Ensure that the repo has the username and token added from the
     # official Volttron Dockerhub page at https://hub.docker.com/repository/docker/eclipsevolttron/volttron/general
@@ -109,6 +111,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
+        platforms: linux/amd64,linux/arm64
         push:  true
         tags: |
           ${{ env.IMAGE_BASE_NAME }}:${{ env.VERSION }}

@@ -14,8 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         # Each entry in the os and python-version matrix will be run so for the 1 x 3 there will be 4 jobs run
-        os: [ ubuntu-20.04 ]
-        python-version: [ 3.8 ]
+        os: [ ubuntu-22.04 ]
+        python-version: [ 3.10 ]
 
     runs-on: ${{ matrix.os }}
 
@@ -25,13 +25,13 @@ jobs:
     - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
 
     # https://github.com/marketplace/actions/checkout
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Code cleanup
       run: |
         pip install pre-commit
         pre-commit run --all-files
     - name: Run integration tests
-      run: ./run-test-docker-image.sh -g volttron -t develop -w 360
+      run: ./run-test-docker-image.sh
       # After numerous test runs, it appears that the server on GitHub Actions takes about 6 minutes (360 seconds) to complete the Volttron setup;
       # if the tests start running less than 6 minutes after the container is being created, we might exec into the container before it starts running,
       # thereby causing the tests to fail because the container isn't running.
